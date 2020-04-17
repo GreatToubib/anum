@@ -12,7 +12,7 @@ u( 1 ) = u_anal( x0 , t ) ;
 %CL a d r o i t e
 % . . .
 u( n ) = u_anal( xL , t ) ;
-32
+
 % . . .
 %C o n s t r u c t i o n de u t = a . u2 . ux + uxx + b ( u?u4 )
 % . . .
