@@ -38,30 +38,28 @@ time=t;
 %%%%%%%%%%%%%%%%%%%%%%%%% répétition de l'algo en faisant varier un paramètre %%%%%%%%%%%%%%%%%
 for stgw = [0 1 2 3] 
     
-%%%%%%%%%%%%%%%%%%%%%%%%% lancement chronomètre %%%%%%%%%%%%%%%%%
-tic
-disp([' starting avec jpattern ' , num2str(Jpattern) , ' solv: ' , num2str(solv) , ' nbre de points: ' , num2str(nx), ' D1:  ' , num2str(D), ' stgw:  ' , num2str(stgw) ])
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%% grille spatiale selon nx %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% répétition de l'algo en faisant varier un paramètre %%%%%%%%%%%%%%%%%
 dx = (xL-x0)/(nx-1);
 x = x0:dx:xL;
 x=x';
 space=x;
 
-%%%%%%%%%%%%%%%%%%%%%%%%% Conditions initiales %%%%%%%%%%%%%%%%%
 u = zeros(1,nx);
 for i = 1:nx
     u(i) = analytique_KMN(space(i),0);
 end
 u = u';
 
-%%%%%%%%%%%%%%%%%%%%%%%%% tolérances %%%%%%%%%%%%%%%%%
+
+
+%tolerances
 reltol = tol;
 abstol = tol;
 
+tic
+disp([' starting avec jpattern ' , num2str(Jpattern) , ' solv: ' , num2str(solv) , ' nbre de points: ' , num2str(nx), ' D1:  ' , num2str(D), ' stgw:  ' , num2str(stgw) ])
 
-%%%%%%%%%%%%%%%%%%%%%%%%% solution analytique (et plot) %%%%%%%%%%%%%%%%%
+%Solution analytique
 if plotgraph==1
     figure;
 end;
@@ -69,6 +67,7 @@ for k=1:length( time )
 for i =1:nx
 yexact(k,i) = analytique_KMN(space(i) , time( k )) ;
 end ;
+
 if plotgraph==1
     plot(space,yexact(k,:),'r')
     %title('Equation de KMN, solution exacte analytique')
@@ -76,8 +75,8 @@ if plotgraph==1
 end;
 end ;
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Schemas de differences finies %%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% choix de D1 %%%%%%%%%%%%%%%%%
 if D == 1
   D1=five_point_biased_upwind_D1( space , V ) ;
@@ -104,7 +103,7 @@ elseif D == 11
 elseif D== 12
   D1=two_point_upwind_D1( space , -V );
 end
-D2=five_point_centered_D2( space ) ;
+D2=three_point_centered_D2( space ) ;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% choix de D3 %%%%%%%%%%%%%%%%%
@@ -159,6 +158,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Fin chrono %%%%%%%%%%%%%%%%%
 tcpu = toc;
+disp([' tcpu avec jpattern ' , num2str(Jpattern) , ' solv: ' , num2str(solv) , 'nbre de points: ' , num2str(nx), 'D1:  ' , num2str(D), 'stgw:  ' , num2str(stgw) ])
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% plot graph analytique vs numerique %%%%%%%%%%%%%%%%%
 if plotgraph==1
@@ -176,17 +177,14 @@ e=ec_KMN( yexact , yout , space, ploterr );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% enregistrement des performances de chaque simulation %%%%%%%%%%%%%%%%%
 treg=[treg, tcpu];
 ereg=[ereg, e];
-
+treg=treg';
+ereg=ereg';
+data=[treg,ereg];
 
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% fin de la simulation avec les paramètres fixés %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%% mettre tcpu et ec dans un tableau data en 2 col %%%%%%%%%%%%%%%%%%%%%%%% 
-treg=treg';
-ereg=ereg';
-data=[treg,ereg];
 
 
 
